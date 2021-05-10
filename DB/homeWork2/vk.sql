@@ -21,7 +21,7 @@ CREATE TABLE countries(
 CREATE TABLE cities(
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(150) NOT NULL UNIQUE COMMENT "Название города",
-  country_id INT NOT NULL COMMENT "Название страны",
+  country_id INT UNSIGNED NOT NULL COMMENT "Название страны",
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки",
   FOREIGN KEY (country_id) REFERENCES countries(id)
@@ -49,20 +49,18 @@ CREATE TABLE users(
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   first_name VARCHAR(100) NOT NULL COMMENT "Имя пользователя",
   last_name VARCHAR(100) NOT NULL COMMENT "Фамилия пользователя",
-  gender_id INT NOT NULL UNSIGNED,
+  gender_id INT UNSIGNED NOT NULL ,
   birthday DATE,
   photo_id INT UNSIGNED,
   city_id INT UNSIGNED NOT NULL,
   country_id INT UNSIGNED NOT NULL,
   email VARCHAR(100) NOT NULL UNIQUE,
   phone VARCHAR(100) NOT NULL UNIQUE,
-  likes_count INT UNSIGNED,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки",
   FOREIGN KEY(gender_id) REFERENCES genders(id),
   FOREIGN KEY(city_id) REFERENCES cities(id),
-  FOREIGN KEY(country_id) REFERENCES countries(id),
-  FOREIGN KEY(likes_count) REFERENCES likes_users(count_likes),
+  FOREIGN KEY(country_id) REFERENCES countries(id)
 ) COMMENT "Пользователи";
 
 CREATE TABLE messages(
@@ -75,7 +73,7 @@ CREATE TABLE messages(
   created_at DATETIME DEFAULT NOW() COMMENT "Время создания строки",
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки",
   FOREIGN KEY (from_user_id) REFERENCES users(id),
-  FOREIGN KEY (to_user_id) REFERENCES users(id),
+  FOREIGN KEY (to_user_id) REFERENCES users(id)
 ) COMMENT "Сообщения";
 
 CREATE TABLE friendship (
@@ -95,10 +93,10 @@ CREATE TABLE friendship (
 CREATE TABLE communities(
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(150) NOT NULL UNIQUE COMMENT "Навание группы",
-  group_admin_id INT NOT NULL UNSIGNED COMMENT "Админ группы",
+  group_admin_id INT UNSIGNED NOT NULL  COMMENT "Админ группы",
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки",
-  FOREIGN KEY group_admin_id REFERENCES users(id),
+  FOREIGN KEY (group_admin_id) REFERENCES users(id)
 ) COMMENT "Группы";
 
 CREATE TABLE communities_users(
@@ -107,8 +105,8 @@ CREATE TABLE communities_users(
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки",
   PRIMARY KEY (community_id, user_id),
-  FOREIGN KEY community_id REFERENCES communities(id),
-  FOREIGN KEY user_id REFERENCES users(id)
+  FOREIGN KEY (community_id) REFERENCES communities(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
 )COMMENT "Связь групп и пользователей";
 
 CREATE TABLE media(
@@ -117,13 +115,11 @@ CREATE TABLE media(
   filename VARCHAR(255) NOT NULL COMMENT "Путь к файлу",
   size INT NOT NULL,
   metadata JSON,
-  likes_count INT UNSIGNED,
   media_type_id INT UNSIGNED NOT NULL COMMENT "Ссылка на тип контента",
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки",
   FOREIGN KEY (user_id) REFERENCES users(id),
   FOREIGN KEY (media_type_id) REFERENCES media_types(id)
-  FOREIGN KEY (likes_count) REFERENCES likes_media(count_likes)
 );
 
 CREATE TABLE posts(
@@ -131,11 +127,9 @@ id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
 user_id INT UNSIGNED NOT NULL COMMENT "Ссылка на пользователя, который создал пост",
 theme VARCHAR(255) NOT NULL COMMENT "Тема поста",
 body TEXT NOT NULL COMMENT "Тело поста",
-likes_count INT UNSIGNED,
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки",
-FOREIGN KEY (user_id) REFERENCES users(id),
-FOREIGN KEY (likes_count) REFERENCES likes_posts(count_likes),
+FOREIGN KEY (user_id) REFERENCES users(id)
 ) COMMENT "Посты";
 
 CREATE TABLE likes_users(
